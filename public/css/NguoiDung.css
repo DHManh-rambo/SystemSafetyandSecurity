@@ -1,0 +1,217 @@
+.nguoi-dung-container * {
+    box-sizing: border-box;
+}
+
+.nguoi-dung-container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 0 16px;
+}
+
+.nguoi-dung-container h2 {
+    border-left: 6px solid #000;
+    padding-left: 15px;
+    margin-bottom: 20px;
+}
+
+.nguoi-dung-container .card {
+    background: #fff;
+    border: 1px solid #ddd;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.nguoi-dung-container .card-header {
+    background: #f9f9f9;
+    padding: 12px 20px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    font-size: 1.1rem;
+}
+
+.nguoi-dung-container .card-body {
+    padding: 20px;
+}
+
+.nguoi-dung-container .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.nguoi-dung-container .form-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.nguoi-dung-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.nguoi-dung-container input,
+.nguoi-dung-container select,
+.nguoi-dung-container textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    background: #fff;
+    color: #000;
+    border-radius: 4px;
+}
+
+.nguoi-dung-container input:focus,
+.nguoi-dung-container select:focus,
+.nguoi-dung-container textarea:focus {
+    outline: none;
+    border-color: #000;
+}
+
+.nguoi-dung-container button,
+.nguoi-dung-container .btn {
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.nguoi-dung-container button:hover,
+.nguoi-dung-container .btn:hover {
+    background: #333;
+}
+
+.nguoi-dung-container .btn-secondary {
+    background: #6c757d;
+}
+
+.nguoi-dung-container .btn-secondary:hover {
+    background: #5a6268;
+}
+
+.nguoi-dung-container .btn-danger {
+    background: #dc3545;
+}
+
+.nguoi-dung-container .btn-danger:hover {
+    background: #c82333;
+}
+
+.nguoi-dung-container .btn-sm {
+    padding: 4px 10px;
+    font-size: 13px;
+}
+
+.nguoi-dung-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.nguoi-dung-container th,
+.nguoi-dung-container td {
+    border: 1px solid #ddd;
+    padding: 10px 8px;
+    text-align: left;
+}
+
+.nguoi-dung-container th {
+    background: #f2f2f2;
+    font-weight: 600;
+}
+
+.nguoi-dung-container .action-buttons button {
+    margin-right: 5px;
+}
+
+.nguoi-dung-container .alert {
+    padding: 12px;
+    border-left: 4px solid;
+    margin-bottom: 20px;
+}
+
+.nguoi-dung-container .alert-success {
+    background: #e9f6ec;
+    border-color: #2e7d32;
+    color: #1e4620;
+}
+
+.nguoi-dung-container .alert-error {
+    background: #fdecea;
+    border-color: #d32f2f;
+    color: #b71c1c;
+}
+
+.nguoi-dung-container .password-wrapper {
+    position: relative;
+}
+
+.nguoi-dung-container .password-wrapper input {
+    padding-right: 80px;
+}
+
+.nguoi-dung-container .toggle-pwd {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    background: none;
+    border: none;
+    color: #000;
+
+    font-size: 13px;
+    cursor: pointer;
+    padding: 0;
+
+    height: auto;
+    line-height: 1;
+}
+.nguoi-dung-container hr {
+    margin: 15px 0;
+}
+
+.nguoi-dung-container .inline-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.nguoi-dung-container .hidden-field {
+    display: none;
+}
+
+.nguoi-dung-container .alert {
+    position: relative;
+    padding: 0.75rem 2rem 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+.nguoi-dung-container .close-alert {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: inherit;
+}
+
+.nguoi-dung-container .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.nguoi-dung-container .alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}

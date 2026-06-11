@@ -1,0 +1,186 @@
+/* .about-hero {
+    max-width: 1400px;
+    margin: 30px auto;
+    min-height: 300px;
+    border-radius: 24px;
+    background: linear-gradient(90deg, #fff1f6 0%, #ffe4ec 45%, #ffd3e0 100%);
+    padding: 60px 70px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 10px 28px rgba(232, 67, 106, .12);
+} */
+.about-hero {
+    max-width: 1400px;
+    margin: 30px auto;
+    min-height: 480px;
+
+    border-radius: 24px;
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    align-items: center;
+
+    padding: 80px 70px;
+
+    position: relative;
+    overflow: hidden;
+}
+.about-hero-text span {
+    color: var(--primary);
+    font-size: 34px;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+}
+
+.about-hero-text h1 {
+    font-size: 58px;
+    color: var(--primary);
+    font-family: 'Playfair Display', serif;
+    margin: 8px 0 18px;
+}
+
+.about-hero-text p {
+    max-width: 520px;
+    color: #4b5563;
+    font-size: 18px;
+    line-height: 1.8;
+}
+
+.about-section,
+.about-commit {
+    max-width: 1400px;
+    margin: 50px auto;
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+}
+
+.about-text h2,
+.about-commit h2 {
+    font-size: 34px;
+    color: #1f2937;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.about-text h2::after,
+.about-commit h2::after {
+    content: "";
+    width: 70px;
+    height: 4px;
+    background: var(--primary);
+    border-radius: 999px;
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+}
+
+.about-text p {
+    color: #4b5563;
+    font-size: 17px;
+    line-height: 1.9;
+    margin-bottom: 18px;
+}
+
+.about-image img {
+    width: 100%;
+    height: 360px;
+    object-fit: cover;
+    border-radius: 22px;
+    box-shadow: 0 10px 28px rgba(232, 67, 106, .14);
+}
+
+.about-features {
+    max-width: 1400px;
+    margin: 45px auto;
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 26px;
+}
+
+.about-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 28px 22px;
+    text-align: center;
+    box-shadow: 0 10px 26px rgba(232, 67, 106, .10);
+}
+
+.about-card div {
+    font-size: 38px;
+    margin-bottom: 14px;
+}
+
+.about-card h3 {
+    color: #1f2937;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.about-card p {
+    color: #6b7280;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.about-commit ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 30px;
+    list-style: none;
+    padding: 0;
+    margin-top: 35px;
+}
+
+.about-commit li {
+    color: #4b5563;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.about-commit li::before {
+    content: "✅ ";
+    color: var(--primary);
+}
+
+.about-commit img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 22px;
+}
+
+@media (max-width: 900px) {
+    .about-section,
+    .about-commit {
+        grid-template-columns: 1fr;
+    }
+
+    .about-features {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .about-hero {
+        padding: 42px 30px;
+    }
+}
+
+@media (max-width: 560px) {
+    .about-features {
+        grid-template-columns: 1fr;
+    }
+
+    .about-hero-text h1 {
+        font-size: 42px;
+    }
+
+    .about-commit ul {
+        grid-template-columns: 1fr;
+    }
+}

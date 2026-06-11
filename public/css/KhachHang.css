@@ -1,0 +1,248 @@
+.khach-hang-container {
+    color: #111827;
+}
+
+.khach-hang-container * {
+    box-sizing: border-box;
+}
+
+.kh-page-header {
+    background: #fff;
+    border: 1px solid #eef2f7;
+    border-radius: 18px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    margin-bottom: 18px;
+}
+
+.kh-header-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    background: #fce7f3;
+    font-size: 34px;
+}
+
+.kh-page-header h1 {
+    margin: 0;
+    font-size: 28px;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: #111827;
+}
+
+.kh-page-header p {
+    margin: 8px 0 0;
+    color: #6b7280;
+    font-size: 15px;
+}
+
+.kh-stats {
+    background: #fff;
+    border: 1px solid #eef2f7;
+    border-radius: 18px;
+    padding: 20px 28px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    margin-bottom: 18px;
+}
+
+.kh-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.kh-stat-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: #fce7f3;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+}
+
+.kh-stat-item span {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.kh-stat-item h2 {
+    margin: 4px 0 0;
+    color: #111827;
+    font-size: 24px;
+}
+
+.kh-alert {
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.kh-alert-success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.kh-alert-error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.kh-card {
+    background: #fff;
+    border: 1px solid #eef2f7;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+}
+
+.kh-toolbar {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.kh-toolbar h3 {
+    margin: 0 0 10px;
+    color: #111827;
+    font-size: 16px;
+}
+
+.kh-sort-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.kh-btn {
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #111827;
+    text-decoration: none;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    transition: 0.2s;
+}
+
+.kh-btn:hover,
+.kh-btn.active {
+    background: #ec4899;
+    color: #fff;
+    border-color: #ec4899;
+}
+
+.kh-search {
+    width: 320px;
+    height: 44px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    background: #fff;
+}
+
+.kh-search span {
+    color: #9ca3af;
+}
+
+.kh-search input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+    color: #111827;
+}
+
+.kh-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.kh-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.kh-table th {
+    background: #fff1f5;
+    color: #111827;
+    padding: 14px 12px;
+    text-align: left;
+    border: 1px solid #e5e7eb;
+    white-space: nowrap;
+}
+
+.kh-table td {
+    padding: 13px 12px;
+    border: 1px solid #e5e7eb;
+    color: #111827;
+    vertical-align: middle;
+}
+
+.kh-table tbody tr:hover {
+    background: #fff7fb;
+}
+
+.kh-point {
+    color: #ec4899;
+}
+
+.kh-delete-btn {
+    background: #b91c1c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.2s;
+}
+
+.kh-delete-btn:hover {
+    background: #991b1b;
+}
+
+.kh-empty {
+    text-align: center;
+    color: #9ca3af;
+    padding: 24px;
+}
+
+.kh-table-footer {
+    margin-top: 18px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+@media (max-width: 900px) {
+    .kh-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .kh-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .kh-search {
+        width: 100%;
+    }
+}

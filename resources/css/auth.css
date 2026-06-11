@@ -1,0 +1,30 @@
+/* White-pink theme for auth pages */
+:root{
+    --rose-50: #fff0f6;
+    --rose-100: #ffd6e7;
+    --rose-300: #f9a8d4;
+    --rose-500: #f43f5e;
+    --rose-600: #e11d48;
+}
+
+.bg-auth-gradient{
+    background: linear-gradient(180deg, #ffffff 0%, var(--rose-50) 100%);
+}
+
+.auth-card{
+    background: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 8px 24px rgba(236,72,153,0.06);
+    border: 1px solid rgba(244,63,94,0.06);
+}
+
+.btn-rose{
+    background-color: var(--rose-500);
+    color: #fff;
+}
+.btn-rose:hover{ background-color: var(--rose-600); }
+
+.link-rose{ color: var(--rose-600); }
+.link-rose:hover{ color: var(--rose-500); }
+
+.input-focus-rose:focus{ box-shadow: 0 0 0 4px rgba(244,63,94,0.08); border-color: var(--rose-300); }
