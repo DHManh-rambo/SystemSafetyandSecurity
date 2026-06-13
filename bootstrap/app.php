@@ -14,6 +14,18 @@ return Application::configure(basePath: dirname(__DIR__))
 
     ->withMiddleware(function (Middleware $middleware): void {
 
+        // Re-enabled full CSRF protection
+        $middleware->validateCsrfTokens(except: [
+            //
+        ]);
+
+        // Trust all proxies (needed for Ngrok / Cloudflare to get real client IP)
+        $middleware->trustProxies(at: '*');
+
+        $middleware->web(append: [
+            \App\Http\Middleware\SecurityShield::class,
+        ]);
+
         $middleware->alias([
             'role'       => \App\Http\Middleware\CheckRole::class,
             'admin'      => \App\Http\Middleware\CheckAdmin::class,

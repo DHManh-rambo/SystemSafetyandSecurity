@@ -30,6 +30,7 @@ class CustomerProfileController extends Controller
             'quan_huyen'       => 'required|string|max:100',
             'xa_phuong'        => 'required|string|max:100',
             'dia_chi_chi_tiet' => 'required|string|max:255',
+            'anh_dai_dien'     => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ], [
             'ten_khach_hang.required'   => 'Vui lòng nhập họ tên.',
             'so_dien_thoai.required'    => 'Vui lòng nhập số điện thoại.',
@@ -40,7 +41,25 @@ class CustomerProfileController extends Controller
             'quan_huyen.required'       => 'Vui lòng chọn quận/huyện.',
             'xa_phuong.required'        => 'Vui lòng chọn xã/phường.',
             'dia_chi_chi_tiet.required' => 'Vui lòng nhập địa chỉ chi tiết.',
+            'anh_dai_dien.image'        => 'Ảnh đại diện phải là tệp ảnh.',
+            'anh_dai_dien.mimes'        => 'Định dạng ảnh được chấp nhận: jpeg, png, jpg, gif, svg.',
+            'anh_dai_dien.max'          => 'Kích thước ảnh tối đa là 2MB.',
         ]);
+
+        $duongDanAnh = $khachHang->anh_dai_dien;
+        if ($request->hasFile('anh_dai_dien')) {
+            if ($khachHang->anh_dai_dien && file_exists(public_path($khachHang->anh_dai_dien))) {
+                try {
+                    unlink(public_path($khachHang->anh_dai_dien));
+                } catch (\Exception $e) {
+                    // Bỏ qua lỗi xóa file cũ nếu không tồn tại
+                }
+            }
+            $file = $request->file('anh_dai_dien');
+            $tenFile = time() . '_' . preg_replace('/[^A-Za-z0-9\._-]/', '', $file->getClientOriginalName());
+            $file->move(public_path('uploads/avatars'), $tenFile);
+            $duongDanAnh = 'uploads/avatars/' . $tenFile;
+        }
 
         $diaChiDayDu = $request->dia_chi_chi_tiet
             . ', ' . $request->xa_phuong
@@ -52,6 +71,7 @@ class CustomerProfileController extends Controller
             'so_dien_thoai'  => $request->so_dien_thoai,
             'email'          => $request->email,
             'dia_chi'        => $diaChiDayDu,
+            'anh_dai_dien'   => $duongDanAnh,
         ]);
 
         return redirect()

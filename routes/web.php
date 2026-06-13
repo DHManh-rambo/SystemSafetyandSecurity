@@ -80,11 +80,23 @@ Route::middleware(['auth', 'role:ADMIN'])->group(function () {
     Route::prefix('bao-cao')->name('bao-cao.')->group(function () {
         Route::get('/',             [BaoCaoController::class, 'index'])->name('index');
         Route::get('/doanh-thu',    [BaoCaoController::class, 'doanhThu'])->name('doanh-thu');
-Route::get('/doanh-thu/export', [BaoCaoController::class, 'exportDoanhThu'])->name('doanh-thu.export');
+        Route::get('/doanh-thu/export', [BaoCaoController::class, 'exportDoanhThu'])->name('doanh-thu.export');
         Route::get('/loi-nhuan',    [BaoCaoController::class, 'index'])->name('loi-nhuan');
         Route::get('/san-pham',     [BaoCaoController::class, 'baoCaoSanPham'])->name('san-pham');
         Route::get('/ton-kho',      [BaoCaoController::class, 'index'])->name('ton-kho');
         Route::get('/khach-hang',   [BaoCaoController::class, 'index'])->name('khach-hang');
+    });
+
+    // Quản trị Bảo mật & AI Security Center
+    Route::prefix('admin/security')->name('admin.security.')->controller(\App\Http\Controllers\SecurityController::class)->group(function () {
+        Route::get('/dashboard', 'dashboard')->name('dashboard');
+        Route::get('/logs', 'logs')->name('logs');
+        Route::post('/ips/release', 'releaseIp')->name('ips.release');
+        Route::get('/pending-users', 'pendingUsers')->name('pending-users');
+        Route::post('/users/{id}/approve', 'approveUser')->name('users.approve');
+        Route::post('/users/{id}/block', 'blockUser')->name('users.block');
+        Route::get('/reports', 'reports')->name('reports');
+        Route::post('/reports/generate', 'generateReport')->name('reports.generate');
     });
 });
 

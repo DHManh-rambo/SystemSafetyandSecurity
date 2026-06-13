@@ -23,6 +23,20 @@ class AuthenticatedSessionController extends Controller
     // Lưu lại giỏ hàng trước khi đăng nhập
     $gioHang = session('gio_hang', []);
 
+    $user = \App\Models\NguoiDung::where('ten_dang_nhap', $request->ten_dang_nhap)->first();
+    if ($user) {
+        if ($user->isBanned()) {
+            return back()->withErrors([
+                'ten_dang_nhap' => 'Tài khoản của bạn đã bị khóa do phát hiện hành vi nghi ngờ tấn công.',
+            ])->onlyInput('ten_dang_nhap');
+        }
+        if ($user->isPending()) {
+            return back()->withErrors([
+                'ten_dang_nhap' => 'Tài khoản của bạn đang tạm thời bị khóa để quản trị viên xác minh.',
+            ])->onlyInput('ten_dang_nhap');
+        }
+    }
+
     if (! Auth::attempt([
         'ten_dang_nhap' => $request->ten_dang_nhap,
         'password'      => $request->password,

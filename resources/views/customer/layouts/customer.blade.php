@@ -138,7 +138,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
     <div class="header-action-item">
         <a href="{{ route('customer.profile.edit') }}" class="user-profile-link">
-            <span class="user-avatar">👤</span>
+            @php
+                $userAuth = auth()->user();
+                $avatarPath = $userAuth && $userAuth->khachHang && $userAuth->khachHang->anh_dai_dien && file_exists(public_path($userAuth->khachHang->anh_dai_dien)) 
+                    ? asset($userAuth->khachHang->anh_dai_dien) 
+                    : null;
+            @endphp
+            @if($avatarPath)
+                <img src="{{ $avatarPath }}" class="user-avatar" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; display: inline-block; vertical-align: middle; margin-right: 5px;">
+            @else
+                <span class="user-avatar">👤</span>
+            @endif
 
             <div class="user-info">
                 <span>Xin chào,</span>

@@ -85,7 +85,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('customer.profile.update') }}">
+                <form method="POST" action="{{ route('customer.profile.update') }}" enctype="multipart/form-data">
                     @csrf
                     @method('PATCH')
 
@@ -105,6 +105,23 @@
                     @endphp
 
                     <div class="form-grid">
+                        <!-- Avatar Section -->
+                        <div class="fgroup span2" style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px; padding: 15px; background: rgba(232, 67, 106, 0.05); border-radius: 12px; border: 1px dashed rgba(232, 67, 106, 0.2);">
+                            <div class="avatar-preview-container" style="position: relative; width: 80px; height: 80px; border-radius: 50%; overflow: hidden; background: #f3f4f6; border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center;">
+                                @if($khachHang->anh_dai_dien && file_exists(public_path($khachHang->anh_dai_dien)))
+                                    <img src="{{ asset($khachHang->anh_dai_dien) }}" id="avatar-preview" style="width: 100%; height: 100%; object-fit: cover;">
+                                @else
+                                    <div id="avatar-placeholder" style="font-size: 2rem; color: var(--gray);">👤</div>
+                                    <img id="avatar-preview" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                                @endif
+                            </div>
+                            <div class="avatar-upload-inputs" style="flex: 1;">
+                                <label style="font-weight: 600; display: block; margin-bottom: 8px; font-size: 0.82rem; color: var(--primary-dark);"><i class="fas fa-camera"></i> Ảnh đại diện (Avatar)</label>
+                                <input type="file" name="anh_dai_dien" id="anh_dai_dien_input" accept="image/*" style="font-size: 0.85rem;" onchange="previewImage(this)">
+                                <span style="display: block; font-size: 0.75rem; color: var(--gray); margin-top: 4px;">Chấp nhận file ảnh: JPG, JPEG, PNG, GIF, SVG (Tối đa 2MB).</span>
+                            </div>
+                        </div>
+
                         {{-- Tên đăng nhập (readonly) --}}
                         <div class="fgroup">
                             <label><i class="fas fa-at" style="font-size:.7rem;"></i> Tên đăng nhập</label>
@@ -504,6 +521,21 @@ function checkMatch() {
     } else {
         label.textContent = '✗ Mật khẩu chưa khớp';
         label.style.color = 'var(--red)';
+    }
+}
+
+function previewImage(input) {
+    const file = input.files[0];
+    const preview = document.getElementById('avatar-preview');
+    const placeholder = document.getElementById('avatar-placeholder');
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            if (placeholder) placeholder.style.display = 'none';
+        }
+        reader.readAsDataURL(file);
     }
 }
 </script>

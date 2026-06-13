@@ -75,15 +75,35 @@
                     </a>
 
                     <div class="menu-item report-title">
-                        📊 Báo cáo thống kê
+                        Trung tâm Bảo mật AI
+                    </div>
+
+                    <a href="{{ route('admin.security.dashboard') }}" class="submenu-item {{ request()->routeIs('admin.security.dashboard') ? 'active' : '' }}">
+                        Dashboard Bảo mật
+                    </a>
+
+                    <a href="{{ route('admin.security.logs') }}" class="submenu-item {{ request()->routeIs('admin.security.logs') ? 'active' : '' }}">
+                         Log Tấn công & Block IP
+                    </a>
+
+                    <a href="{{ route('admin.security.pending-users') }}" class="submenu-item {{ request()->routeIs('admin.security.pending-users') ? 'active' : '' }}">
+                         Duyệt tài khoản khóa
+                    </a>
+
+                    <a href="{{ route('admin.security.reports') }}" class="submenu-item {{ request()->routeIs('admin.security.reports') ? 'active' : '' }}">
+                         Báo cáo Bảo mật AI
+                    </a>
+
+                    <div class="menu-item report-title">
+                         Báo cáo thống kê
                     </div>
 
                     <a href="{{ route('bao-cao.doanh-thu') }}" class="submenu-item {{ request()->routeIs('bao-cao.doanh-thu') ? 'active' : '' }}">
-                        📈 Báo cáo doanh thu
+                         Báo cáo doanh thu
                     </a>
 
                     <a href="{{ route('bao-cao.san-pham') }}" class="submenu-item {{ request()->routeIs('bao-cao.san-pham') ? 'active' : '' }}">
-                        📦 Báo cáo sản phẩm
+                         Báo cáo sản phẩm
                     </a>
                 @endif
             </nav>

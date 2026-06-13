@@ -23,6 +23,7 @@ class NguoiDung extends Authenticatable
         'ten_dang_nhap',
         'mat_khau',
         'vai_tro',
+        'trang_thai',
     ];
 
     protected $hidden = [
@@ -31,6 +32,7 @@ class NguoiDung extends Authenticatable
 
     protected $casts = [
         'vai_tro' => 'string',
+        'trang_thai' => 'string',
     ];
 
     public function getAuthIdentifierName()
@@ -72,8 +74,23 @@ class NguoiDung extends Authenticatable
         $this->attributes['mat_khau'] = bcrypt($value);
     }
 
-public function cartItems(): HasMany
-{
-    return $this->hasMany(GioHang::class, 'ma_nguoi_dung', 'ma_nguoi_dung');
-}
+    public function cartItems(): HasMany
+    {
+        return $this->hasMany(GioHang::class, 'ma_nguoi_dung', 'ma_nguoi_dung');
+    }
+
+    public function isBanned()
+    {
+        return $this->trang_thai === 'KHOA';
+    }
+
+    public function isPending()
+    {
+        return $this->trang_thai === 'CHO_DUYET';
+    }
+
+    public function securityLogs(): HasMany
+    {
+        return $this->hasMany(SecurityLog::class, 'ma_nguoi_dung', 'ma_nguoi_dung');
+    }
 }
