@@ -6,10 +6,11 @@ Tài liệu này trình bày chi tiết về kiến trúc bảo mật lai (Hybri
 
 ## 📖 MỤC LỤC
 1. [Tổng Quan Kiến Trúc Bảo Mật](#1-tổng-quan-kiến-trúc-bảo-mật)
-2. [5 Lớp Phòng Thủ Của Hệ Thống](#2-5-lớp-phòng-thủ-của-hệ-thống)
-3. [Nguyên Lý Hoạt Động Của Mô Hình AI WAF](#3-nguyên-lý-hoạt-động-của-mô-hình-ai-waf)
-4. [Hướng Dẫn Cấu Hình Và Chạy Demo](#4-hướng-dẫn-cấu-hình-và-chạy-demo)
-5. [Xem Nhật Ký Bảo Mật & Dashboard Quản Trị](#5-xem-nhật-ký-bảo-mật--dashboard-quản-trị)
+2. [Luồng Hoạt Động Của Bảo Mật Ứng Dụng](#2-luồng-hoạt-động-của-bảo-mật-ứng-dụng)
+3. [5 Lớp Phòng Thủ Của Hệ Thống](#3-5-lớp-phòng-thủ-của-hệ-thống)
+4. [Nguyên Lý Hoạt Động Của Mô Hình AI WAF](#4-nguyên-lý-hoạt-động-của-mô-hình-ai-waf)
+5. [Hướng Dẫn Cấu Hình Và Chạy Demo](#5-hướng-dẫn-cấu-hình-và-chạy-demo)
+6. [Xem Nhật Ký Bảo Mật & Dashboard Quản Trị](#6-xem-nhật-ký-bảo-mật--dashboard-quản-trị)
 
 ---
 
@@ -53,7 +54,117 @@ graph TD
 
 ---
 
-## 2. 5 LỚP PHÒNG THỦ CỦA HỆ THỐNG
+## 2. LUỒNG HOẠT ĐỘNG CỦA BẢO MẬT ỨNG DỤNG
+
+Hệ thống bảo mật của RoseShop hoạt động dưới dạng một bộ lọc nhiều lớp (Middleware SecurityShield) nhằm đánh chặn, phân tích và xử lý mọi yêu cầu gửi từ Client trước khi chuyển giao cho Controller xử lý.
+
+### Sơ đồ luồng hoạt động tuần tự (Sequence Diagram)
+
+Dưới đây là sơ đồ chi tiết về luồng hoạt động tuần tự khi hệ thống tiếp nhận một yêu cầu:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Client as Người dùng / Hacker
+    participant Laravel as SecurityShield Middleware
+    participant Cache as Laravel Cache (Redis/File)
+    participant AI as FastAPI AI Service (Cổng 5000)
+    participant DB as Cơ sở dữ liệu (MySQL)
+    participant App as Controller / Routing
+
+    Client->>Laravel: Gửi HTTP Request (Payload, File, IP)
+    
+    Note over Laravel, Cache: Bước 1: Kiểm tra Blacklist IP
+    Laravel->>Cache: Kiểm tra IP có bị block? (blocked_ip_*)
+    alt IP đã bị khóa
+        Cache-->>Laravel: Trả về trạng thái Blocked
+        Laravel-->>Client: Trả về HTTP 403 (Forbidden)
+    else IP hợp lệ
+        Cache-->>Laravel: Trả về Clean
+    end
+
+    Note over Laravel, Cache: Bước 2: Kiểm tra Rate Limit (DOS)
+    Laravel->>Cache: Tăng số lượng request từ IP trong phút hiện tại (req_count_*)
+    Cache-->>Laravel: Trả về số lượng request hiện tại
+    alt Số request > 60 req/phút
+        Laravel->>Cache: Lưu chặn IP blocked_ip_* trong 1 giờ (3600s)
+        Laravel->>DB: Ghi log tấn công DOS (Severity: HIGH, Action: BLOCKED_IP)
+        Laravel-->>Client: Trả về HTTP 429 (Too Many Requests)
+    end
+
+    Note over Laravel: Bước 3: Kiểm tra File tải lên (nếu có)
+    alt Có File tải lên (Upload File)
+        Laravel->>Laravel: 3.1 Kiểm tra đuôi file (Banned Extensions)
+        Laravel->>Laravel: 3.2 Đọc 8KB đầu tiên, quét chữ ký nhị phân (Steganography / Web Shell)
+        alt Phát hiện file độc hại / đuôi cấm
+            Laravel->>Cache: Lưu chặn IP blocked_ip_* trong 24 giờ (86400s)
+            Laravel->>DB: Ghi log Malicious_Upload (Severity: CRITICAL, Action: LOCKED_ACCOUNT)
+            Laravel->>DB: Chuyển trạng thái người dùng -> CHO_DUYET
+            Laravel->>Laravel: Thu hồi Token Session (Logout)
+            Laravel-->>Client: Trả về HTTP 403 (Forbidden - Locked)
+        end
+    end
+
+    Note over Laravel, AI: Bước 4: Kiểm tra Payload đầu vào (SQLi, XSS, Path Traversal)
+    alt Có dữ liệu đầu vào (POST / GET params)
+        Laravel->>AI: Gửi payload phân tích (/analyze-payload)
+        alt AI Service ONLINE
+            AI-->>Laravel: Trả về kết quả phân tích (is_attack, attack_type, confidence)
+        else AI Service OFFLINE (Fallback)
+            Laravel->>Laravel: Sử dụng Local Regex Heuristics
+            Laravel-->>Laravel: Trả về kết quả phân tích (is_attack, attack_type, confidence: 0.95)
+        end
+
+        alt Phát hiện tấn công (is_attack = true)
+            alt Threat Score (Confidence * 100) >= 58
+                Laravel->>Cache: Lưu chặn IP blocked_ip_* trong 30 phút (1800s)
+                Laravel->>DB: Ghi log tấn công (Severity: HIGH, Action: PENDING_MODERATION)
+                Laravel->>DB: Chuyển trạng thái tài khoản -> CHO_DUYET
+                Laravel->>Laravel: Thu hồi Token Session (Logout)
+                Laravel-->>Client: Trả về HTTP 403 (Forbidden - Blocked by AI WAF)
+            else Threat Score < 58 (Cảnh báo nhẹ)
+                Laravel->>DB: Ghi log tấn công (Severity: MEDIUM, Action: LOG_ONLY)
+            end
+        end
+    end
+
+    Note over Laravel, App: Bước 5: Tiếp tục xử lý nghiệp vụ
+    Laravel->>App: Chuyển request hợp lệ vào Controller xử lý
+    App-->>Client: Trả về HTTP Response kết quả
+```
+
+| Cơ chế | Nhóm tấn công mục tiêu | Điểm số quy ước/tính toán | Tại sao lại phân chia như vậy? |
+| --- | --- | --- | --- |
+| Rate Limiting (Tĩnh) | DOS / DDoS, Spam Request, Brute Force (Dò mật khẩu dồn dập). | 85 điểm (Cố định) | Tấn công DOS không nằm ở nội dung dữ liệu gửi lên mà nằm ở tần suất gửi request quá nhanh. Do đó, chỉ cần đếm số lượng request/phút bằng cache tĩnh là đủ để phát hiện và chặn tức thời. |
+| File Upload Check (Tĩnh) | Malicious File Upload, tải lên Web Shell, Remote Code Execution (RCE) qua ảnh chứa mã ẩn độc hại (Steganography). | 100 điểm (Cố định) | Việc tải lên một tệp tin thực thi độc hại (như .php, .js) hoặc file ảnh chứa mã độc là hành vi phá hoại nguy hiểm bậc nhất. Cần xử lý quét nhị phân tĩnh cực nhanh ngay trên máy chủ ứng dụng trước khi lưu tệp vào ổ cứng để bảo vệ hạ tầng. |
+| AI WAF Engine (Động) | SQL Injection (SQLi), Cross-Site Scripting (XSS), Path Traversal (đọc file .env, /etc/passwd trái phép). | Dự đoán động từ 50 - 100 điểm (dựa trên xác suất của AI) | Hacker thường tìm cách mã hóa payload, che giấu ký tự hoặc viết lách lách luật để vượt qua bộ lọc thông thường. Mô hình AI được sinh ra để nhận diện độ bất thường của ngữ nghĩa chuỗi nhập liệu này và đưa ra điểm số xác suất chính xác nhất. |
+
+
+### Các bước hoạt động chi tiết:
+
+1. **Đánh chặn yêu cầu (Intercept Request):** Mọi HTTP Request gửi từ người dùng khi đến RoseShop đều phải đi qua `SecurityShield` Middleware đầu tiên.
+2. **IP Blacklist Cache Check:**
+   - Hệ thống tối ưu hóa hiệu năng bằng cách kiểm tra nhanh xem địa chỉ IP của client có tồn tại trong cache chặn (`blocked_ip_{ip}`) hay không.
+   - Nếu tồn tại, lập tức chấm dứt luồng (abort) và trả về lỗi `HTTP 403` mà không chạy vào bất kỳ đoạn code nghiệp vụ nào tiếp theo.
+3. **Rate Limiting (Ngăn chặn DOS):**
+   - Đếm số lượt request từ một IP trong vòng `60 giây` (`req_count_{ip}`).
+   - Nếu vượt quá ngưỡng cấu hình (`60 request / phút`), IP sẽ lập tức bị chặn trong `1 giờ`. Log loại tấn công `DOS` sẽ được lưu vào cơ sở dữ liệu để quản trị viên kiểm tra.
+4. **Kiểm tra File Upload (Tải tệp nguy hiểm):**
+   - Nếu yêu cầu có chứa tệp tin tải lên, Middleware thực hiện kiểm tra kép:
+     - **Extension Check:** So sánh phần mở rộng của file với danh sách cấm (`.php`, `.phtml`, `.exe`, `.js`,...).
+     - **Binary Steganography Check:** Đọc nội dung 8KB đầu tiên của tệp tin để phát hiện các thẻ mã nguồn PHP/JS nguy hại nhúng bên trong (như `<?php`, `eval()`, `system()`).
+   - Nếu phát hiện vi phạm, hệ thống áp dụng hình phạt cấp độ **CRITICAL**: Khóa IP `24 giờ`, chuyển trạng thái tài khoản người đăng nhập thành `CHO_DUYET` (Buộc đăng xuất và không thể đăng nhập lại cho đến khi Admin phê duyệt).
+5. **Kiểm tra Payload Đầu Vào (XSS, SQLi, Path Traversal):**
+   - Lọc bỏ các tham số hệ thống nhạy cảm (như mật khẩu, token CSRF), sau đó gửi chuỗi JSON payload sang **AI Service (FastAPI)** chạy trên cổng `5000`.
+   - **Cơ chế Fallback (Dự phòng):** Nếu kết nối tới AI Service bị lỗi hoặc máy chủ AI đang ngoại tuyến, Middleware sẽ tự động bắt exception và sử dụng tập luật **Regex Heuristics nội bộ** để quét payload.
+   - **Đánh giá điểm đe dọa (Threat Score):**
+     - Nếu điểm đe dọa **>= 58%**: Khóa IP trong `30 phút`, chuyển trạng thái tài khoản đang đăng nhập thành `CHO_DUYET` (Buộc đăng xuất ngay) và trả về lỗi `HTTP 403`.
+     - Nếu điểm đe dọa **< 58%**: Chỉ ghi nhận thông tin tấn công vào `security_logs` để hỗ trợ phân tích hành vi bất thường sau này, yêu cầu vẫn được thông qua.
+6. **Cho phép truy cập (Allow Pass):** Request sạch sẽ vượt qua tất cả các chốt chặn và tiến tới Router, Controller để phục vụ người dùng bình thường.
+
+---
+
+## 3. 5 LỚP PHÒNG THỦ CỦA HỆ THỐNG
 
 ### Lớp 1 — IP Blacklist Cache (Chặn tức thời)
 Mỗi request đi vào ứng dụng sẽ được kiểm tra IP đầu tiên trong Laravel Cache.
@@ -85,7 +196,7 @@ Kiểm tra tất cả dữ liệu người dùng gửi lên thông qua ô nhập
 
 ---
 
-## 3. NGUYÊN LÝ HOẠT ĐỘNG CỦA MÔ HÌNH AI WAF
+## 4. NGUYÊN LÝ HOẠT ĐỘNG CỦA MÔ HÌNH AI WAF
 
 Dịch vụ AI tại thư mục `ai-service` chạy trên cổng `5000` được cấu hình với hai thành phần AI chính: **Mô hình máy học tĩnh (WAF Model)** và **Trí tuệ nhân tạo tạo sinh (LLM Gemini)**.
 
@@ -112,7 +223,7 @@ Mô hình này hoạt động theo mô hình xử lý ngôn ngữ tự nhiên (N
 
 ---
 
-## 4. HƯỚNG DẪN CẤU HÌNH VÀ CHẠY DEMO
+## 5. HƯỚNG DẪN CẤU HÌNH VÀ CHẠY DEMO
 
 ### Yêu Cầu Chuẩn Bị
 * **PHP >= 8.2** & **Composer**
@@ -173,7 +284,7 @@ Mở trình duyệt của bạn (hoặc thiết bị khác truy cập qua tunnel
 
 ---
 
-## 5. XEM NHẬT KÝ BẢO MẬT & DASHBOARD QUẢN TRỊ
+## 6. XEM NHẬT KÝ BẢO MẬT & DASHBOARD QUẢN TRỊ
 
 Khi cuộc tấn công bị chặn, bạn hãy đăng nhập tài khoản Admin (`admin1` / `password123`) để theo dõi kết quả:
 
